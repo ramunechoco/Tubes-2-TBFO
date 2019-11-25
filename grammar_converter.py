@@ -37,6 +37,7 @@ def TERM(grammar):
     i = 1
     newRule = []
     valuestore = []
+    variablestore = []
     for rule in grammar:
         if isSimple(rule):
             newRule.append(rule)
@@ -44,12 +45,17 @@ def TERM(grammar):
             for symbol in Terminals:                
                 for index, value in enumerate(rule[right]):
                     if symbol == value and not symbol in valuestore:
-                        valuestore.append(value)
+                        valuestore.append(symbol)
                         newVar = 'S' + str(i)
+                        variablestore.append(newVar)
                         Variables.append(newVar)
                         newRule.append([[newVar], [symbol]])
                         rule[right][index] = newVar
                         i += 1
+                    elif symbol == value:
+                        newVar = variablestore[valuestore.index(symbol)]
+                        rule[right][index] = newVar
+            newRule.append([rule[left],rule[right]])
     return newRule
 
 grammar = read_cfg('grammar_placeholder.txt')
