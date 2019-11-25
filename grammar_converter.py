@@ -5,7 +5,6 @@ Terminals, Variables, result = [],[],[]
 RULE_DICT = {}
 
 def read_cfg(cfg_file):
-    # reading cfg file.
     final_grammar = []
     with open(cfg_file) as cfg:
         terminal = cfg.readline().split()
@@ -35,12 +34,12 @@ def START(grammar):
 
 def TERM(grammar):
     i = 1
-    newRule = []
+    newGrammar = []
     valuestore = []
     variablestore = []
     for rule in grammar:
         if isSimple(rule):
-            newRule.append(rule)
+            newGrammar.append(rule)
         else:
             for symbol in Terminals:                
                 for index, value in enumerate(rule[right]):
@@ -49,18 +48,37 @@ def TERM(grammar):
                         newVar = 'S' + str(i)
                         variablestore.append(newVar)
                         Variables.append(newVar)
-                        newRule.append([[newVar], [symbol]])
+                        newGrammar.append([[newVar], [symbol]])
                         rule[right][index] = newVar
                         i += 1
                     elif symbol == value:
                         newVar = variablestore[valuestore.index(symbol)]
                         rule[right][index] = newVar
-            newRule.append([rule[left],rule[right]])
-    return newRule
+            newGrammar.append([rule[left],rule[right]])
+    return newGrammar
+
+def BIN(grammar):
+    newGrammar = []
+    for rule in grammar:
+        rlength = len(rule[right])
+        if rlength <= 2:
+            newGrammar.append(rule)
+        else:
+            newVar = 'B1'
+            Variables.append(newVar)
+            newGrammar.append([rule[left],rule[right][0]]+[newVar+'1'])
+            i = 1
+            for i in range(1, rlength-2):
+                var, var2 = newVar+str(i), newVar+str(i+1)
+                Variables.append(var2)
+                newGrammar.append([var, [rule[right][i], var2]])
+            newGrammar.append([newVar+str(rlength-2), rule[right][rlength-2:rlength]]) 
+    return newGrammar
 
 grammar = read_cfg('grammar_placeholder.txt')
 grammar = START(grammar)
 grammar = TERM(grammar)
+grammar = BIN(grammar)
 print("Terminals:")
 print(Terminals)
 print("Variables:")
