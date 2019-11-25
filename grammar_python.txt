@@ -1,0 +1,6 @@
+//Terminal 
+'if' 'while' 'return' 'class' 'def'
+
+// Non - Terminal
+IF WHILE RETURN CLASS DEF
+
