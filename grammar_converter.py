@@ -35,21 +35,26 @@ def START(grammar):
 
 def TERM(grammar):
     i = 1
+    newRule = []
+    valuestore = []
     for rule in grammar:
-        newRule = []
         if isSimple(rule):
-            newGrammar.append(rule)
+            newRule.append(rule)
         else:
             for symbol in Terminals:                
                 for index, value in enumerate(rule[right]):
-                    if term == value:
-                        rule[right][index] = 'S',i
-                        i 
-    return newGrammar
-
+                    if symbol == value and not symbol in valuestore:
+                        valuestore.append(value)
+                        newVar = 'S' + str(i)
+                        Variables.append(newVar)
+                        newRule.append([[newVar], [symbol]])
+                        rule[right][index] = newVar
+                        i += 1
+    return newRule
 
 grammar = read_cfg('grammar_placeholder.txt')
 grammar = START(grammar)
+grammar = TERM(grammar)
 print("Terminals:")
 print(Terminals)
 print("Variables:")
