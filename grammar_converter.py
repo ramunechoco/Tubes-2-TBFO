@@ -135,6 +135,14 @@ def UNIT(grammar,variables):
         i+=1
     return result
 
+def NumNonTerminals(filetext):
+    Terminals, Variables, Grammar = loadModel(filetext)
+    return len(Variables)
+
+def GetNonTerminals(filetext):
+    Terminals, Variables, Grammar = loadModel(filetext)
+    return Variables
+
 def main(filetext):
     Terminals, Variables, Grammar = loadModel(filetext)
     Grammar = START(Grammar,Variables)
