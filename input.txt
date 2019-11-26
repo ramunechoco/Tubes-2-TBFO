@@ -1,6 +1,7 @@
 Terminals:
-a b
+a b c
 Variables:
-S
+S A
 Grammar:
-S -> a | b
+S -> a | b | a S | b S | A;
+A -> c
