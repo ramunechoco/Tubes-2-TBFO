@@ -7,15 +7,14 @@ def loadTXT(txtfile):
     sentence = file.split()
     return sentence
 
-
 def CYK():
     P = [[[False for k in range(nt)] for j in range(ns)] for i in range(ns)]
     for i in range(ns):
         for j in range(ng):
             print("sentence[", i, "]: ", sentence[i])
-            print("grammar[", j, "][right]: ", grammar[j][right])
-            print(grammar[j][right] == sentence[i])
-            if grammar[j][right] == sentence[i]:
+            print("grammar[", j, "][right][0]: ", grammar[j][right][0])
+            print(grammar[j][right][0] == sentence[i])
+            if grammar[j][right][0] == sentence[i]:
                 a = grammar[j][left]
                 found = False
                 k = 0
@@ -65,9 +64,9 @@ def CYK():
                             P[i][j][o-1] = True
     return P[ns-1][0][0]
 
-sentence = loadTXT("input.txt")
-grammar = grammar_converter.GetGrammar("grammar_python.txt")
-variable = grammar_converter.GetNonTerminals("grammar_python.txt")
+sentence = loadTXT("newinput.txt")
+grammar = grammar_converter.GetGrammar("input.txt")
+variable = grammar_converter.GetNonTerminals("input.txt")
 
 nt = len(variable)
 ng = len(grammar)
