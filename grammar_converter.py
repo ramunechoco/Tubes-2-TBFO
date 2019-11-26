@@ -59,7 +59,7 @@ def BIN(grammar):
             for i in range(1, rlength-2):
                 var, var2 = newVar+str(i), newVar+str(i+1)
                 Variables.append(var2)
-                result.append( (var, [rule[right][i], var2]) )
+                newGrammar.append( (var, [rule[right][i], var2]) )
             newGrammar.append((newVar+str(rlength-2), rule[right][rlength-2:rlength]))
     return newGrammar
 
@@ -99,7 +99,7 @@ def UNIT(grammar):
     return result
 
 if __name__ == '__main__':
-    modelPath = 'grammar_placeholder.txt'
+    modelPath = 'grammar_python.txt'
     
     Terminals, Variables, Grammar = assist.loadModel(modelPath)
 
@@ -107,7 +107,7 @@ if __name__ == '__main__':
     Grammar = TERM(Grammar)
     Grammar = BIN(Grammar)
     Grammar = DEL(Grammar)
-    print( Terminals )
-    print( Variables )
-    print( Grammar )
-    print( len(Grammar) )
+    print(Terminals)
+    print(Variables)
+    print(Grammar)
+    print(len(Grammar))
