@@ -145,6 +145,6 @@ def main(filetext):
     Grammar = UNIT(Grammar,Variables)
     return Grammar
 
-grammar = main('grammar_placeholder.txt')
+grammar = main('grammar_python.txt')
 print(prettyForm(grammar))
 open('outputtest.txt', 'w').write(prettyForm(grammar) )
