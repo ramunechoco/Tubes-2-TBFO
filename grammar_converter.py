@@ -1,7 +1,5 @@
 left, right = 0, 1
 
-Terminals, Variables, Grammar = [],[],[]
-
 def loadModel(modelPath):
     file = open(modelPath).read()
     T = (file.split("Variables:\n")[0].replace("Terminals:\n","").replace("\n",""))
@@ -53,26 +51,28 @@ def prettyForm(rules):
         result += key+" -> "+dictionary[key]+"\n"
     return result
 
-def START(grammar):
-    Variables.append('S0')
-    return [('S0', [Variables[0]])] + grammar
+def START(grammar,variables):
+    variables.append('S0')
+    result = [('S0', [variables[0]])] + grammar
+    return result
 
-def TERM(grammar):
+def TERM(grammar,variables,terminals):
     i = 1
     newGrammar = []
     valuestore = []
     variablestore = []
     for rule in grammar:
-        if rule[left] in Variables and rule[right][0] in Terminals and len(rule[right]) == 1:
+        if rule[left] in variables and rule[right][0] in terminals and len(rule[right]) == 1:
             newGrammar.append(rule)
         else:
-            for symbol in Terminals:                
+            for symbol in terminals:             
                 for index, value in enumerate(rule[right]):
                     if symbol == value and not symbol in valuestore:
                         valuestore.append(symbol)
                         newVar = 'TERM' + str(i)
+                        print(newVar)
                         variablestore.append(newVar)
-                        Variables.append(newVar)
+                        variables.append(newVar)
                         newGrammar.append([newVar, [symbol]])
                         rule[right][index] = newVar
                         i += 1
@@ -82,7 +82,7 @@ def TERM(grammar):
             newGrammar.append([rule[left],rule[right]])
     return newGrammar
 
-def BIN(grammar):
+def BIN(grammar,variables):
     newGrammar = []
     j = 1
     for rule in grammar:
@@ -91,20 +91,20 @@ def BIN(grammar):
             newGrammar.append(rule)
         else:
             newVar = 'BIN'+str(j)
-            Variables.append(newVar+'1')
+            variables.append(newVar+'1')
             newGrammar.append( (rule[left], [rule[right][0]]+[newVar+'1']) )
             j = j + 1
             i = 1
             for i in range(1, rlength-2):
                 var, var2 = newVar+str(i), newVar+str(i+1)
-                Variables.append(var2)
+                variables.append(var2)
                 newGrammar.append( (var, [rule[right][i], var2]) )
             newGrammar.append((newVar+str(rlength-2), rule[right][rlength-2:rlength]))
     return newGrammar
 
 def DEL(grammar):
     newSet = []
-    outlaws, grammar = seekAndDestroy(target='epsilon', grammar=grammar)
+    outlaws, grammar = seekAndDestroy(target='e', grammar=grammar)
     for outlaw in outlaws:
         for rule in grammar + [e for e in newSet if e not in grammar]:
             if outlaw in rule[right]:
@@ -112,10 +112,10 @@ def DEL(grammar):
     return newSet + ([grammar[i] for i in range(len(grammar)) 
                             if grammar[i] not in newSet])
 
-def unit_repeat(grammar):
+def unit_repeat(grammar,variables):
     unitaries, result = [], []
     for rule in grammar:   
-        if rule[left] in Variables and rule[right][0] in Variables and len(rule[right]) == 1:
+        if rule[left] in variables and rule[right][0] in variables and len(rule[right]) == 1:
             unitaries.append( (rule[left], rule[right][0]) )
         else:
             result.append(rule)
@@ -125,26 +125,25 @@ def unit_repeat(grammar):
                 result.append( (uni[left],rule[right]) )
     return result
 
-def UNIT(grammar):
+def UNIT(grammar,variables):
     i = 0
-    result = unit_repeat(grammar)
-    tmp = unit_repeat(result)
+    result = unit_repeat(grammar,variables)
+    tmp = unit_repeat(result,variables)
     while result != tmp and i < 1000:
-        result = unit_repeat(tmp)
-        tmp = unit_repeat(result)
+        result = unit_repeat(tmp,variables)
+        tmp = unit_repeat(result,variables)
         i+=1
     return result
 
-if __name__ == '__main__':
-    modelPath = 'grammar_placeholder.txt'
-    Terminals, Variables, Grammar = loadModel(modelPath)
-    Grammar = START(Grammar)
-    Grammar = TERM(Grammar)
-    Grammar = BIN(Grammar)
+def main(filetext):
+    Terminals, Variables, Grammar = loadModel(filetext)
+    Grammar = START(Grammar,Variables)
+    Grammar = TERM(Grammar,Variables,Terminals)
+    Grammar = BIN(Grammar,Variables)
     Grammar = DEL(Grammar)
-    Grammar = UNIT(Grammar)
-    print(Terminals)
-    print(Variables)
+    Grammar = UNIT(Grammar,Variables)
     print(prettyForm(Grammar))
-    print( len(Grammar) )
-    open('out.txt', 'w').write(prettyForm(Grammar) )
+    return Grammar
+
+grammar = main('grammar_python.txt')
+open('output.txt', 'w').write(prettyForm(grammar) )
