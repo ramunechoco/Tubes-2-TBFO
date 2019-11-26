@@ -12,6 +12,9 @@ def CYK():
     P = [[[False for k in range(nt)] for j in range(ns)] for i in range(ns)]
     for i in range(ns):
         for j in range(ng):
+            print("sentence[", i, "]: ", sentence[i])
+            print("grammar[", j, "][right]: ", grammar[j][right])
+            print(grammar[j][right] == sentence[i])
             if grammar[j][right] == sentence[i]:
                 a = grammar[j][left]
                 found = False
@@ -21,11 +24,16 @@ def CYK():
                         found = True
                     if not found:
                         k += 1
-                P[0][i][k] = True
+                print("k", str(k))
+                P[0][i][k-1] = True
     for i in range(1, ns):
+        print("i: ", str(i))
         for j in range(ns-i+1):
+            print("j: ", str(j))
             for k in range(i-1):
+                print(k)
                 for l in range(ng):
+                    print(l)
                     if len(grammar[l][right]) == 2:
                         a = grammar[l][right][0]
                         found = False
@@ -51,6 +59,7 @@ def CYK():
                                 found = True
                             if not found:
                                 o += 1
+                        print(m,n,o)
                         # Vo -> VmVn
                         if P[k][j][m-1] and P[i-k][j+k][n-1]:
                             P[i][j][o-1] = True
@@ -63,6 +72,8 @@ variable = grammar_converter.GetNonTerminals("grammar_python.txt")
 nt = len(variable)
 ng = len(grammar)
 ns = len(sentence) 
+
+print(nt,ng,ns)
 
 if CYK():
     print("Accepted")
