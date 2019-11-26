@@ -15,8 +15,9 @@ def Parser(sentence):
 
     for i in range(nTab):
         for j in range(len(sentence)):
-            if sentence[j] == grammar[right]:
-                table[i] = 
+            for k in range(len(grammar)):
+                if sentence[j] == grammar[k][right]: # gini ga sih? maksudnya elemen ke k, yang kanan
+                    table[i].append(grammar[k][left])
 
 
 
