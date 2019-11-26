@@ -136,6 +136,18 @@ def UNIT(grammar,variables):
         i+=1
     return result
 
+def NumNonTerminals(filetext):
+    Terminals, Variables, Grammar = loadModel(filetext)
+    return len(Variables)
+
+def GetNonTerminals(filetext):
+    Terminals, Variables, Grammar = loadModel(filetext)
+    return Variables
+
+def GetGrammar(filetext):
+    Terminals, Variables, Grammar = loadModel(filetext)
+    return Grammar    
+
 def main(filetext):
     Terminals, Variables, Grammar = loadModel(filetext)
     Grammar = START(Grammar,Variables)
@@ -146,5 +158,3 @@ def main(filetext):
     return Grammar
 
 grammar = main('grammar_python.txt')
-print(prettyForm(grammar))
-open('outputtest.txt', 'w').write(prettyForm(grammar) )
