@@ -1,18 +1,57 @@
-import assist
-
 left, right = 0, 1
 
 Terminals, Variables, Grammar = [],[],[]
 
-def isUnitary(rule, variables):
-    if rule[left] in variables and rule[right][0] in variables and len(rule[right]) == 1:
-        return True
-    return False
+def loadModel(modelPath):
+    file = open(modelPath).read()
+    T = (file.split("Variables:\n")[0].replace("Terminals:\n","").replace("\n",""))
+    V = (file.split("Variables:\n")[1].split("Grammar:\n")[0].replace("Variables:\n","").replace("\n",""))
+    G = (file.split("Grammar:\n")[1])
+    T = T.replace('  ',' ').split(' ')
+    V = V.replace('  ',' ').split(' ')
+    return T, V, cleanGrammar(G)
 
-def isSimple(rule):
-    if rule[left] in Variables and rule[right][0] in Terminals and len(rule[right]) == 1:
-        return True
-    return False
+def cleanGrammar(expression):
+    result = []
+    rawRulse = expression.replace('\n','').split(';')
+    for rule in rawRulse:
+        leftSide = rule.split(' -> ')[0].replace(' ','')
+        rightTerms = rule.split(' -> ')[1].split(' | ')
+        for term in rightTerms:
+            result.append( (leftSide, term.split(' ')) )
+    return result
+
+def seekAndDestroy(target, grammar):
+    trash, ereased = [],[]
+    for rule in grammar:
+        if target in rule[right] and len(rule[right]) == 1:
+            trash.append(rule[left])
+        else:
+            ereased.append(rule)
+            
+    return trash, ereased
+
+def rewrite(target, production):
+    result = []
+    positions = [i for i,x in enumerate(production[right]) if x == target]
+    for i in range(len(positions)+1):
+        for element in list(itertools.combinations(positions, i)):
+            tadan = [production[right][i] for i in range(len(production[right])) if i not in element]
+            if tadan != []:
+                result.append((production[left], tadan))
+    return result
+
+def prettyForm(rules):
+    dictionary = {}
+    for rule in rules:
+        if rule[left] in dictionary:
+            dictionary[rule[left]] += ' | '+' '.join(rule[right])
+        else:
+            dictionary[rule[left]] = ' '.join(rule[right])
+    result = ""
+    for key in dictionary:
+        result += key+" -> "+dictionary[key]+"\n"
+    return result
 
 def START(grammar):
     Variables.append('S0')
@@ -24,7 +63,7 @@ def TERM(grammar):
     valuestore = []
     variablestore = []
     for rule in grammar:
-        if isSimple(rule):
+        if rule[left] in Variables and rule[right][0] in Terminals and len(rule[right]) == 1:
             newGrammar.append(rule)
         else:
             for symbol in Terminals:                
@@ -51,9 +90,9 @@ def BIN(grammar):
         if rlength <= 2:
             newGrammar.append(rule)
         else:
-            newVar = 'BIN'
-            Variables.append(newVar+str(j))
-            newGrammar.append( (rule[left], [rule[right][0]]+[newVar+str(j)]) )
+            newVar = 'BIN'+str(j)
+            Variables.append(newVar+'1')
+            newGrammar.append( (rule[left], [rule[right][0]]+[newVar+'1']) )
             j = j + 1
             i = 1
             for i in range(1, rlength-2):
@@ -65,28 +104,26 @@ def BIN(grammar):
 
 def DEL(grammar):
     newSet = []
-    outlaws, grammar = assist.seekAndDestroy(target='epsilon', grammar=grammar)
+    outlaws, grammar = seekAndDestroy(target='epsilon', grammar=grammar)
     for outlaw in outlaws:
         for rule in grammar + [e for e in newSet if e not in grammar]:
             if outlaw in rule[right]:
-                newSet = newSet + [e for e in  assist.rewrite(outlaw, grammar) if e not in newSet]
+                newSet = newSet + [e for e in rewrite(outlaw, grammar) if e not in newSet]
     return newSet + ([grammar[i] for i in range(len(grammar)) 
                             if grammar[i] not in newSet])
 
-
 def unit_repeat(grammar):
-    newGrammar = []
-    unit_production = []
-    for rule in grammar:
-        if isUnitary(rule, Variables):
-            unit_production.append((rule[left], rule[right][0]))
+    unitaries, result = [], []
+    for rule in grammar:   
+        if rule[left] in Variables and rule[right][0] in Variables and len(rule[right]) == 1:
+            unitaries.append( (rule[left], rule[right][0]) )
         else:
-            newGrammar.append(rule)
-        for uni in unit_production:
-            for rule in grammar:
-                if uni[right]==rule[left] and uni[left]!=rule[left]:
-                    newGrammar.append((uni[left],rule[right]))
-        return newGrammar
+            result.append(rule)
+    for uni in unitaries:
+        for rule in grammar:
+            if uni[right]==rule[left] and uni[left]!=rule[left]:
+                result.append( (uni[left],rule[right]) )
+    return result
 
 def UNIT(grammar):
     i = 0
@@ -99,15 +136,15 @@ def UNIT(grammar):
     return result
 
 if __name__ == '__main__':
-    modelPath = 'grammar_python.txt'
-    
-    Terminals, Variables, Grammar = assist.loadModel(modelPath)
-
+    modelPath = 'grammar_placeholder.txt'
+    Terminals, Variables, Grammar = loadModel(modelPath)
     Grammar = START(Grammar)
     Grammar = TERM(Grammar)
     Grammar = BIN(Grammar)
     Grammar = DEL(Grammar)
+    Grammar = UNIT(Grammar)
     print(Terminals)
     print(Variables)
-    print(Grammar)
-    print(len(Grammar))
+    print(prettyForm(Grammar))
+    print( len(Grammar) )
+    open('out.txt', 'w').write(prettyForm(Grammar) )
