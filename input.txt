@@ -1,0 +1,6 @@
+Terminals:
+a b
+Variables:
+S
+Grammar:
+S -> a | b
