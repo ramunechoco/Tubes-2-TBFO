@@ -1,3 +1,5 @@
+import itertools 
+
 left, right = 0, 1
 
 def loadModel(modelPath):
@@ -70,7 +72,6 @@ def TERM(grammar,variables,terminals):
                     if symbol == value and not symbol in valuestore:
                         valuestore.append(symbol)
                         newVar = 'TERM' + str(i)
-                        print(newVar)
                         variablestore.append(newVar)
                         variables.append(newVar)
                         newGrammar.append([newVar, [symbol]])
@@ -104,11 +105,11 @@ def BIN(grammar,variables):
 
 def DEL(grammar):
     newSet = []
-    outlaws, grammar = seekAndDestroy(target='e', grammar=grammar)
+    outlaws, grammar = seekAndDestroy(target='EPSILON', grammar=grammar)
     for outlaw in outlaws:
         for rule in grammar + [e for e in newSet if e not in grammar]:
             if outlaw in rule[right]:
-                newSet = newSet + [e for e in rewrite(outlaw, grammar) if e not in newSet]
+                newSet = newSet + [e for e in rewrite(outlaw, rule) if e not in newSet]
     return newSet + ([grammar[i] for i in range(len(grammar)) 
                             if grammar[i] not in newSet])
 
@@ -135,14 +136,6 @@ def UNIT(grammar,variables):
         i+=1
     return result
 
-def NumNonTerminals(filetext):
-    Terminals, Variables, Grammar = loadModel(filetext)
-    return len(Variables)
-
-def GetNonTerminals(filetext):
-    Terminals, Variables, Grammar = loadModel(filetext)
-    return Variables
-
 def main(filetext):
     Terminals, Variables, Grammar = loadModel(filetext)
     Grammar = START(Grammar,Variables)
@@ -150,8 +143,8 @@ def main(filetext):
     Grammar = BIN(Grammar,Variables)
     Grammar = DEL(Grammar)
     Grammar = UNIT(Grammar,Variables)
-    print(prettyForm(Grammar))
     return Grammar
 
-grammar = main('grammar_python.txt')
-open('output.txt', 'w').write(prettyForm(grammar) )
+grammar = main('grammar_placeholder.txt')
+print(prettyForm(grammar))
+open('outputtest.txt', 'w').write(prettyForm(grammar) )
