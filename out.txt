@@ -1,0 +1,14 @@
+Expr -> Expr BIN11 | AddOp Term | Term BIN21 | Factor BIN31 | number | variable | TERM2 BIN41
+BIN11 -> AddOp Term
+Term -> Term BIN21 | Factor BIN31 | number | variable | TERM2 BIN41
+BIN21 -> MulOp Factor
+TERM1 -> ^
+Factor -> Factor BIN31 | number | variable | TERM2 BIN41
+BIN31 -> TERM1 Primary
+Primary -> number | variable | TERM2 BIN41
+TERM2 -> (
+TERM3 -> )
+BIN41 -> Expr TERM3
+AddOp -> + | -
+MulOp -> * | /
+S0 -> Expr BIN11 | AddOp Term | Term BIN21 | Factor BIN31 | number | variable | TERM2 BIN41

@@ -6,12 +6,18 @@ import grammar_converter
 left, right = 0, 1
 
 
-sentence = ["lorem", "ipsum", "dolor", "sit", "amet"] #Belom fix, coba gini dulu
-#dianggep grammar sudah didefinisikan
-nTab = len(sentence)*(len(sentence)+1)/2 #bentuk tangga, ukuran pasti n(n+1)/2 dengan n panjang sentence
-table = [[] for i in range nTab]
+def loadTXT(txtfile):
+    file = open(modelPath).read()
+    sentence = (file.split())
 
-def Parser(sentence):
+def concatWords(sentence):
+    global Neff
+    newsentence = ["#" for i in range(Neff-1)]
+    for i in range(len(newsentence)):
+        newsentence[i] = sentence[i] + " " + sentence[i+1]
+    return newsentence
+
+def CYK(sentence):
     correct = True
     i = 0
     while correct and i < len(sentence):
@@ -28,28 +34,13 @@ def Parser(sentence):
             j += 1
         i += 1
 
-    if correct:
-        #langkah selanjutnya adalah untuk barisan barisan berikutnya 
+    while correct:
+        #langkah selanjutnya adalah untuk barisan barisan berikutnya dalam table
 
 
 
-'''
-class Node:
-    def __init__(self, symbol, child1, child2=None):
-        self.symbol = symbol
-        self.child1 = child1
-        self.child2 = child2
-
-    def __repr__(self):
-        return self.symbol
-'''
-
-'''
-class Parser:
-	def __init__(self, grammar, sentence):
-		self.parse_table = None
-		self.prods = {}
-		self.grammar = None
-		self.__call__(sentence)
-    def start()
-'''
+sentence = ["lorem", "ipsum", "dolor", "sit", "amet"] #Belom fix, coba gini dulu
+Neff = len(sentence)
+#dianggep grammar sudah didefinisikan
+nTab = len(sentence)*(len(sentence)+1)/2 #bentuk tangga, ukuran pasti n(n+1)/2 dengan n panjang sentence
+table = [[] for i in range nTab]
