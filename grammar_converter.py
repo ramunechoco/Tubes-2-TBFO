@@ -1,20 +1,8 @@
+import assist
+
 left, right = 0, 1
 
-Terminals, Variables, result = [],[],[]
-
-def read_cfg(cfg_file):
-    final_grammar = []
-    with open(cfg_file) as cfg:
-        terminal = cfg.readline().split()
-        Terminals.extend(terminal)
-        variable = cfg.readline().split()
-        Variables.extend(variable)
-        lines = cfg.readlines()
-    leftright = [x.split("->") for x in lines]
-    for i in range(len(leftright)):
-        splitor = [y.split() for y in leftright[i]]
-        final_grammar.append(splitor)
-    return final_grammar
+Terminals, Variables, Grammar = [],[],[]
 
 def isUnitary(rule, variables):
     if rule[left] in variables and rule[right][0] in variables and len(rule[right]) == 1:
@@ -28,7 +16,7 @@ def isSimple(rule):
 
 def START(grammar):
     Variables.append('S0')
-    return [[['S0'], grammar[left][0]]] + grammar
+    return [('S0', [Variables[0]])] + grammar
 
 def TERM(grammar):
     i = 1
@@ -46,7 +34,7 @@ def TERM(grammar):
                         newVar = 'TERM' + str(i)
                         variablestore.append(newVar)
                         Variables.append(newVar)
-                        newGrammar.append([[newVar], [symbol]])
+                        newGrammar.append([newVar, [symbol]])
                         rule[right][index] = newVar
                         i += 1
                     elif symbol == value:
@@ -57,34 +45,47 @@ def TERM(grammar):
 
 def BIN(grammar):
     newGrammar = []
+    j = 1
     for rule in grammar:
         rlength = len(rule[right])
         if rlength <= 2:
             newGrammar.append(rule)
         else:
             newVar = 'BIN'
-            Variables.append(newVar)
-            newGrammar.append([rule[left],rule[right][0]]+[newVar+'1'])
+            Variables.append(newVar+str(j))
+            newGrammar.append( (rule[left], [rule[right][0]]+[newVar+str(j)]) )
+            j = j + 1
             i = 1
             for i in range(1, rlength-2):
                 var, var2 = newVar+str(i), newVar+str(i+1)
                 Variables.append(var2)
-                newGrammar.append([var, [rule[right][i], var2]])
-            newGrammar.append([[newVar+str(rlength-2)], rule[right][rlength-2:rlength]]) 
+                result.append( (var, [rule[right][i], var2]) )
+            newGrammar.append((newVar+str(rlength-2), rule[right][rlength-2:rlength]))
     return newGrammar
+
+def DEL(grammar):
+    newSet = []
+    outlaws, grammar = assist.seekAndDestroy(target='epsilon', grammar=grammar)
+    for outlaw in outlaws:
+        for rule in grammar + [e for e in newSet if e not in grammar]:
+            if outlaw in rule[right]:
+                newSet = newSet + [e for e in  assist.rewrite(outlaw, grammar) if e not in newSet]
+    return newSet + ([grammar[i] for i in range(len(grammar)) 
+                            if grammar[i] not in newSet])
+
 
 def unit_repeat(grammar):
     newGrammar = []
     unit_production = []
     for rule in grammar:
         if isUnitary(rule, Variables):
-            unit_production.append([[rule[left]], [rule[right][0]]])
+            unit_production.append((rule[left], rule[right][0]))
         else:
             newGrammar.append(rule)
         for uni in unit_production:
             for rule in grammar:
                 if uni[right]==rule[left] and uni[left]!=rule[left]:
-                    newGrammar.append([[uni[left]],[rule[right]]])
+                    newGrammar.append((uni[left],rule[right]))
         return newGrammar
 
 def UNIT(grammar):
@@ -97,15 +98,16 @@ def UNIT(grammar):
         i+=1
     return result
 
+if __name__ == '__main__':
+    modelPath = 'grammar_placeholder.txt'
+    
+    Terminals, Variables, Grammar = assist.loadModel(modelPath)
 
-grammar = read_cfg('grammar_placeholder.txt')
-grammar = START(grammar)
-grammar = TERM(grammar)
-grammar = BIN(grammar)
-grammar = UNIT(grammar)
-print("Terminals:")
-print(Terminals)
-print("Variables:")
-print(Variables)
-print("Grammar:")
-print(grammar)
+    Grammar = START(Grammar)
+    Grammar = TERM(Grammar)
+    Grammar = BIN(Grammar)
+    Grammar = DEL(Grammar)
+    print( Terminals )
+    print( Variables )
+    print( Grammar )
+    print( len(Grammar) )
