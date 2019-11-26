@@ -13,7 +13,15 @@ def CYK():
     for i in range(ns):
         for j in range(ng):
             if grammar[j][right] == sentence[i]:
-                P[0][i][j] = True
+                a = grammar[j][left]
+                found = False
+                k = 0
+                while not found and k < nt:
+                    if variable[k] == a:
+                        found = True
+                    if not found:
+                        k += 1
+                P[0][i][k] = True
     for i in range(1, ns):
         for j in range(ns-i+1):
             for k in range(i-1):
@@ -43,10 +51,10 @@ def CYK():
                                 found = True
                             if not found:
                                 o += 1
-
-                        if P[k][j][m] and P[i-k][j+k][n]:
-                            P[i][j][o] = True
-    return P[0][0][ns]
+                        # Vo -> VmVn
+                        if P[k][j][m-1] and P[i-k][j+k][n-1]:
+                            P[i][j][o-1] = True
+    return P[ns-1][0][0]
 
 sentence = loadTXT("input.txt")
 grammar = grammar_converter.GetGrammar("grammar_python.txt")
