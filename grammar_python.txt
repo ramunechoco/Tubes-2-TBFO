@@ -1,7 +1,7 @@
 Terminals:
-'if' 'while' 'return' 'class' 'def' 'not' 'or' 'False' 'None' 'True' 'and' 'as' 'break' 'continue' 'elif' 'else''from' 'import' 'in' 'is' 'pass' 'raise' 'with' 'object'
+'if' 'while' 'return' 'class' 'def' 'not' 'or' 'False' 'None' 'True' 'and' 'as' 'break' 'continue' 'elif' 'else''from' 'import' 'in' 'is' 'pass' 'raise' 'with' 'object' 'integer' 'float' 'char' 'string' 'bool' '(' ')'
 Variables:
-IF WHILE RETURN CLASS DEF NOT OR FALSE NONE TRUE AND AS BREAK CONTINUE ELIF ELSE FROM IMPORT IN IS PASS RAISE WITH OBJECT IMPORT CONDITION EQUATION1 EQUATION2
+IF WHILE RETURN CLASS DEF NOT OR FALSE NONE TRUE AND AS BREAK CONTINUE ELIF ELSE FROM IMPORT IN IS PASS RAISE WITH OBJECT IMPORT CONDITION EQUATION1 EQUATION2 VAR1 VAR2 SYMBOL1 SYMBOL2 INSIDE CONST INTEGER FLOAT CHAR STRING BOOL ( )
 Grammar:
 S -> FROM OBJECT IMPORT OBJECT AS OBJECT
 S -> IMPORT OBJECT
