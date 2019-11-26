@@ -1,13 +1,6 @@
-import os.path
-import argparse
 import grammar_converter
 
-
 left, right = 0, 1
-
-
-
-
 
 def loadTXT(txtfile):
     file = open(txtfile).read()
@@ -16,6 +9,7 @@ def loadTXT(txtfile):
 
 
 def CYK():
+    P = [[[False for k in range(nt)] for j in range(ns)] for i in range(ns)]
     for i in range(ns):
         for j in range(ng):
             if grammar[j][right] == sentence[i]:
@@ -23,84 +17,46 @@ def CYK():
     for i in range(1, ns):
         for j in range(ns-i+1):
             for k in range(i-1):
-                for l in range():
-                    for m in range
-                if P[p,s,b] and P[l-p,s+p,c] then set P[l,s,a] = true
-                if P[k][j][]
+                for l in range(ng):
+                    if len(grammar[l][right]) == 2:
+                        a = grammar[l][right][0]
+                        found = False
+                        m = 0
+                        while not found and m < nt:
+                            if variable[m] == a:
+                                found = True
+                            if not found:
+                                m += 1
+                        b = grammar[l][right][1]
+                        found = False
+                        n = 0
+                        while not found and n < nt:
+                            if variable[n] == b:
+                                found = True
+                            if not found:
+                                n += 1
+                        c = grammar[l][left]
+                        found = False
+                        o = 0
+                        while not found and o < nt:
+                            if variable[o] == c:
+                                found = True
+                            if not found:
+                                o += 1
 
-
-'''
-let the input be a string I consisting of n characters: a1 ... an.
-let the grammar contain r nonterminal symbols R1 ... Rr, with start symbol R1.
-let P[n,n,r] be an array of booleans. Initialize all elements of P to false.
-for each s = 1 to n
-  for each unit production Rv → as
-    set P[1,s,v] = true
-for each l = 2 to n -- Length of span
-  for each s = 1 to n-l+1 -- Start of span
-    for each p = 1 to l-1 -- Partition of span
-      for each production Ra  → Rb Rc
-        if P[p,s,b] and P[l-p,s+p,c] then set P[l,s,a] = true
-if P[n,1,1] is true then
-  I is member of language
-else
-  I is not member of language
-'''
+                        if P[k][j][m] and P[i-k][j+k][n]:
+                            P[i][j][o] = True
+    return P[0][0][ns]
 
 sentence = loadTXT("input.txt")
-grammar = grammar_converter.main("grammar_python.txt")
+grammar = grammar_converter.GetGrammar("grammar_python.txt")
 variable = grammar_converter.GetNonTerminals("grammar_python.txt")
-nt = grammar_converter.NumNonTerminals("grammar_python.txt")
+
+nt = len(variable)
 ng = len(grammar)
-P = [[[False for k in range(nt)] for j in range(len(sentence))] for i in range(len(sentence))]
-ns = len(sentence) # nsentence 
+ns = len(sentence) 
 
-'''
-def concatWords(sentence):
-    global Neff
-    newsentence = ["#" for i in range(Neff-1)]
-    for i in range(len(newsentence)):
-        newsentence[i] = sentence[i] + " " + sentence[i+1]
-    return newsentence
-
-def StrToTabEl(string):
-    n = len(string)
-    for i in range(1, n):
-        string[:i] 
-
-
-def CYK(sentence):
-    correct = True
-    i = 0
-    while correct and i < len(sentence):
-    #untuk baris pertama, isi table dengan e
-        j = 0
-        while correct and j < len(sentence):
-        #baca sentence
-            count = 0
-            for k in range(len(grammar)):
-                if sentence[j] == grammar[k][right]: # gini ga sih? maksudnya elemen ke k, yang kanan
-                   table[0][i].append(grammar[k][left])
-                   count += 1
-            if count == 0:
-                correct = False #kalau ada sentence yang tidak bisa dicari derivatornya
-            j += 1
-        i += 1
-
-    while correct:
-        #langkah selanjutnya adalah untuk barisan barisan berikutnya dalam table
-        i = 1
-        while i < len(sentence) and correct:
-            #belom kelar :((((
-            sentence = concatWords(sentence)
-            # contoh: dari ["a", "b", "c", "d", "e", "f"] menjadi ["ab", "bc", "cd", "de", "ef"]
-            sentence[i] = 
-
-
-
-sentence = ["lorem", "ipsum", "dolor", "sit", "amet"] #Belom fix, coba gini dulu
-Neff = len(sentence)
-#dianggep grammar sudah didefinisikan
-nTab = len(sentence)*(len(sentence)+1)/2 #bentuk tangga, ukuran pasti n(n+1)/2 dengan n panjang sentence
-table = [[[] for j in range(nTab)] for i in range(nTab)] # buat matriks
-'''
+if CYK():
+    print("Accepted")
+else:
+    print("Syntax Error")
