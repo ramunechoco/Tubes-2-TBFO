@@ -8,16 +8,28 @@ left, right = 0, 1
 
 sentence = ["lorem", "ipsum", "dolor", "sit", "amet"] #Belom fix, coba gini dulu
 #dianggep grammar sudah didefinisikan
-nTab = len(sentence)*(len(sentence)+1)/2 #bentuk tangga
+nTab = len(sentence)*(len(sentence)+1)/2 #bentuk tangga, ukuran pasti n(n+1)/2 dengan n panjang sentence
 table = [[] for i in range nTab]
 
 def Parser(sentence):
-
-    for i in range(nTab):
-        for j in range(len(sentence)):
+    correct = True
+    i = 0
+    while correct and i < len(sentence):
+    #untuk baris pertama, isi table dengan e
+        j = 0
+        while correct and j < len(sentence):
+            count = 0
             for k in range(len(grammar)):
                 if sentence[j] == grammar[k][right]: # gini ga sih? maksudnya elemen ke k, yang kanan
-                    table[i].append(grammar[k][left])
+                   table[i].append(grammar[k][left])
+                   count += 1
+            if count == 0:
+                correct = False #kalau ada sentence yang tidak bisa dicari derivatornya
+            j += 1
+        i += 1
+
+    if correct:
+        #langkah selanjutnya adalah untuk barisan barisan berikutnya 
 
 
 
