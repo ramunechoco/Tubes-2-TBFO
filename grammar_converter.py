@@ -157,5 +157,5 @@ def main(filetext):
     Grammar = UNIT(Grammar,Variables)
     return Grammar
 
-grammar = main('input.txt')
-print(grammar)
+grammar = main('grammar_python.txt')
+print(prettyForm(grammar))
