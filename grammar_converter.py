@@ -2,8 +2,8 @@ import itertools
 
 left, right = 0, 1
 
-def loadModel(modelPath):
-    file = open(modelPath).read()
+def loadFile(filename):
+    file = open(filename).read()
     T = (file.split("Variables:\n")[0].replace("Terminals:\n","").replace("\n",""))
     V = (file.split("Variables:\n")[1].split("Grammar:\n")[0].replace("Variables:\n","").replace("\n",""))
     G = (file.split("Grammar:\n")[1])
@@ -74,13 +74,13 @@ def TERM(grammar,variables,terminals):
                         newVar = 'TERM' + str(i)
                         variablestore.append(newVar)
                         variables.append(newVar)
-                        newGrammar.append([newVar, [symbol]])
+                        newGrammar.append( (newVar, [symbol]) )
                         rule[right][index] = newVar
                         i += 1
                     elif symbol == value:
                         newVar = variablestore[valuestore.index(symbol)]
                         rule[right][index] = newVar
-            newGrammar.append([rule[left],rule[right]])
+            newGrammar.append( (rule[left],rule[right]) )
     return newGrammar
 
 def BIN(grammar,variables):
@@ -149,13 +149,13 @@ def GetGrammar(filetext):
     return Grammar    
 
 def main(filetext):
-    Terminals, Variables, Grammar = loadModel(filetext)
+    Terminals, Variables, Grammar = loadFile(filetext)
     Grammar = START(Grammar,Variables)
     Grammar = TERM(Grammar,Variables,Terminals)
     Grammar = BIN(Grammar,Variables)
     Grammar = DEL(Grammar)
     Grammar = UNIT(Grammar,Variables)
-    return Grammar
+    return Grammar, Variables
 
-grammar = main('input.txt')
+grammar = main('grammar_python.txt')
 print(grammar)
