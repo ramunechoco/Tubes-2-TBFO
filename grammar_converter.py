@@ -156,6 +156,3 @@ def main(filetext):
     Grammar = DEL(Grammar)
     Grammar = UNIT(Grammar,Variables)
     return Grammar, Variables
-
-grammar = main('grammar_python.txt')
-print(grammar)
