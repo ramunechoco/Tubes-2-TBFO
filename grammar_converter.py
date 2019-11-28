@@ -41,7 +41,7 @@ def rewrite(target, production):
                 result.append((production[left], tadan))
     return result
 
-def prettyForm(rules):
+'''def prettyForm(rules): # For debugging purpose only
     dictionary = {}
     for rule in rules:
         if rule[left] in dictionary:
@@ -51,7 +51,7 @@ def prettyForm(rules):
     result = ""
     for key in dictionary:
         result += key+" -> "+dictionary[key]+"\n"
-    return result
+    return result'''
 
 def START(grammar,variables):
     variables.append('S0')
@@ -135,18 +135,6 @@ def UNIT(grammar,variables):
         tmp = unit_repeat(result,variables)
         i+=1
     return result
-
-def NumNonTerminals(filetext):
-    Terminals, Variables, Grammar = loadModel(filetext)
-    return len(Variables)
-
-def GetNonTerminals(filetext):
-    Terminals, Variables, Grammar = loadModel(filetext)
-    return Variables
-
-def GetGrammar(filetext):
-    Terminals, Variables, Grammar = loadModel(filetext)
-    return Grammar    
 
 def main(filetext):
     Terminals, Variables, Grammar = loadFile(filetext)
