@@ -41,7 +41,7 @@ def rewrite(target, production):
                 result.append((production[left], tadan))
     return result
 
-'''def prettyForm(rules): # For debugging purpose only
+def prettyForm(rules): # For debugging purpose only
     dictionary = {}
     for rule in rules:
         if rule[left] in dictionary:
@@ -51,7 +51,7 @@ def rewrite(target, production):
     result = ""
     for key in dictionary:
         result += key+" -> "+dictionary[key]+"\n"
-    return result'''
+    return result
 
 def START(grammar,variables):
     variables.append('S0')
@@ -144,3 +144,6 @@ def main(filetext):
     Grammar = DEL(Grammar)
     Grammar = UNIT(Grammar,Variables)
     return Grammar, Variables
+
+grammar, variable = main('grammar_python.txt')
+open('output.txt', 'w').write(prettyForm(grammar))

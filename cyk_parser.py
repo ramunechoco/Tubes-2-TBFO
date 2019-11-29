@@ -6,7 +6,7 @@ def loadTXT(txtfile):
     result = []
     file = open(txtfile, 'r')
     while 1:
-        char = file.read(1).replace(" ","space")
+        char = file.read(1).replace(" ","space").replace("\n","enter")
         if not char: break
         result.append(char)
     file.close()
